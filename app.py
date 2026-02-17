@@ -1,9 +1,9 @@
+import os
 import streamlit as st
 import sqlite3
 import pandas as pd
 from datetime import datetime
 import hashlib
-import requests
 import requests
 import json
 
@@ -15,30 +15,37 @@ st.set_page_config(
     layout="wide"
 )
 
-# -------------------- OLLAMA CONFIG --------------------
-OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
+# -------------------- AI CONFIG --------------------
+HF_TOKEN = os.getenv("HF_TOKEN")
 
 def generate_ai_response(prompt):
+    if not HF_TOKEN:
+        return "HF_TOKEN is not set in Streamlit Secrets."
+
+    API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-large"
+    headers = {"Authorization": f"Bearer {HF_TOKEN}"}
+
+    payload = {
+        "inputs": f"""
+You are a warm, supportive emotional wellbeing coach.
+Respond kindly and practically. Do not give medical diagnosis.
+
+{prompt}
+""",
+        "options": {"wait_for_model": True}
+    }
+
     try:
-        response = requests.post(
-            "http://127.0.0.1:11434/api/generate",
-            data=json.dumps({
-                "model": "phi",
-                "prompt": prompt,
-                "stream": False
-            }),
-            headers={"Content-Type": "application/json"},
-            timeout=120
-        )
+        response = requests.post(API_URL, headers=headers, json=payload)
+        result = response.json()
 
-        if response.status_code == 200:
-            result = response.json()
-            return result.get("response", "No response received.")
+        if isinstance(result, list):
+            return result[0]["generated_text"]
         else:
-            return f"Error: {response.status_code} - {response.text}"
+            return str(result)
 
-    except requests.exceptions.RequestException as e:
-        return f"Connection failed: {str(e)}"
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 # -------------------- DATABASE --------------------
 conn = sqlite3.connect("happiness_pro.db", check_same_thread=False)
