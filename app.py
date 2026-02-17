@@ -168,10 +168,15 @@ def show_auth():
 # -------------------- SIDEBAR --------------------
 def show_sidebar():
     with st.sidebar:
-        page = st.radio(
-            "Navigation",
-            ["Dashboard", "Mood Tracker", "AI Coach", "Insights", "Survey Results", "Profile"]
-        )
+
+        # Base menu for all users
+        menu_options = ["Dashboard", "Mood Tracker", "AI Coach", "Insights", "Profile"]
+
+        # Add Survey Results only for admin
+        if st.session_state.username == "admin":
+            menu_options.insert(4, "Survey Results")
+
+        page = st.radio("Navigation", menu_options)
 
         st.markdown("---")
         st.write(f"Logged in as: **{st.session_state.username}**")
@@ -182,6 +187,7 @@ def show_sidebar():
             st.rerun()
 
     return page
+
 
 # -------------------- DASHBOARD --------------------
 def show_dashboard():
@@ -287,6 +293,9 @@ def show_insights():
 
 # -------------------- SURVEY RESULT --------------------
 def show_survey_results():
+    if st.session_state.username != "admin":
+    st.error("Access denied.")
+    return
     st.title("Survey Results - All Users")
 
     # Fetch all moods
@@ -371,6 +380,7 @@ else:
         show_survey_results()
     elif page == "Profile":
         show_profile()
+
 
 
 
