@@ -22,7 +22,8 @@ def generate_ai_response(prompt):
     if not HF_TOKEN:
         return "HF_TOKEN is not set in Streamlit Secrets."
 
-    API_URL = "https://router.huggingface.co/hf-inference/models/mistralai/Mistral-7B-Instruct-v0.2"
+    API_URL = "https://router.huggingface.co/hf-inference/models/google/flan-t5-base"
+
     headers = {
         "Authorization": f"Bearer {HF_TOKEN}",
         "Content-Type": "application/json"
@@ -31,14 +32,14 @@ def generate_ai_response(prompt):
     payload = {
         "inputs": f"""
 You are a warm and empathetic emotional wellbeing coach.
-Respond kindly and practically. Do NOT give medical diagnosis.
+Respond kindly and practically.
+Do NOT give medical diagnosis.
 
-User message:
+User:
 {prompt}
 """,
         "parameters": {
-            "max_new_tokens": 200,
-            "temperature": 0.7
+            "max_new_tokens": 150
         }
     }
 
@@ -374,6 +375,7 @@ else:
         show_survey_results()
     elif page == "Profile":
         show_profile()
+
 
 
 
