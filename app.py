@@ -22,25 +22,36 @@ def generate_ai_response(prompt):
     if not HF_TOKEN:
         return "HF_TOKEN is not set in Streamlit Secrets."
 
-    API_URL = "https://router.huggingface.co/hf-inference/models/google/flan-t5-large"
-    headers = {"Authorization": f"Bearer {HF_TOKEN}"}
+    API_URL = "https://router.huggingface.co/hf-inference/models/mistralai/Mistral-7B-Instruct-v0.2"
+    headers = {
+        "Authorization": f"Bearer {HF_TOKEN}",
+        "Content-Type": "application/json"
+    }
 
     payload = {
         "inputs": f"""
-You are a warm, supportive emotional wellbeing coach.
-Respond kindly and practically. Do not give medical diagnosis.
+You are a warm and empathetic emotional wellbeing coach.
+Respond kindly and practically. Do NOT give medical diagnosis.
 
+User message:
 {prompt}
 """,
-        "options": {"wait_for_model": True}
+        "parameters": {
+            "max_new_tokens": 200,
+            "temperature": 0.7
+        }
     }
 
     try:
         response = requests.post(API_URL, headers=headers, json=payload)
+
+        if response.status_code != 200:
+            return f"API Error {response.status_code}: {response.text}"
+
         result = response.json()
 
         if isinstance(result, list):
-            return result[0]["generated_text"]
+            return result[0].get("generated_text", "No response generated.")
         else:
             return str(result)
 
@@ -363,5 +374,6 @@ else:
         show_survey_results()
     elif page == "Profile":
         show_profile()
+
 
 
