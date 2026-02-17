@@ -16,45 +16,41 @@ st.set_page_config(
 )
 
 # -------------------- AI CONFIG --------------------
-HF_TOKEN = os.getenv("HF_TOKEN")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 def generate_ai_response(prompt):
-    if not HF_TOKEN:
-        return "HF_TOKEN is not set in Streamlit Secrets."
+    if not GROQ_API_KEY:
+        return "GROQ_API_KEY not set in Streamlit Secrets."
 
-    API_URL = "https://router.huggingface.co/hf-inference/models/google/flan-t5-base"
+    url = "https://api.groq.com/openai/v1/chat/completions"
 
     headers = {
-        "Authorization": f"Bearer {HF_TOKEN}",
+        "Authorization": f"Bearer {GROQ_API_KEY}",
         "Content-Type": "application/json"
     }
 
-    payload = {
-        "inputs": f"""
-You are a warm and empathetic emotional wellbeing coach.
-Respond kindly and practically.
-Do NOT give medical diagnosis.
-
-User:
-{prompt}
-""",
-        "parameters": {
-            "max_new_tokens": 150
-        }
+    data = {
+        "model": "llama3-8b-8192",
+        "messages": [
+            {
+                "role": "system",
+                "content": "You are a warm, empathetic emotional wellbeing coach. Be supportive and practical."
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        "temperature": 0.7
     }
 
     try:
-        response = requests.post(API_URL, headers=headers, json=payload)
+        response = requests.post(url, headers=headers, json=data)
 
         if response.status_code != 200:
             return f"API Error {response.status_code}: {response.text}"
 
-        result = response.json()
-
-        if isinstance(result, list):
-            return result[0].get("generated_text", "No response generated.")
-        else:
-            return str(result)
+        return response.json()["choices"][0]["message"]["content"]
 
     except Exception as e:
         return f"Error: {str(e)}"
@@ -375,6 +371,7 @@ else:
         show_survey_results()
     elif page == "Profile":
         show_profile()
+
 
 
 
