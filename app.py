@@ -294,8 +294,8 @@ def show_insights():
 # -------------------- SURVEY RESULT --------------------
 def show_survey_results():
     if st.session_state.username != "admin":
-    st.error("Access denied.")
-    return
+        st.error("Access denied.")
+        return
     st.title("Survey Results - All Users")
 
     # Fetch all moods
@@ -380,6 +380,7 @@ else:
         show_survey_results()
     elif page == "Profile":
         show_profile()
+
 
 
 
