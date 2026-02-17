@@ -22,7 +22,7 @@ def generate_ai_response(prompt):
     if not HF_TOKEN:
         return "HF_TOKEN is not set in Streamlit Secrets."
 
-    API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-large"
+    API_URL = "https://router.huggingface.co/hf-inference/models/google/flan-t5-large"
     headers = {"Authorization": f"Bearer {HF_TOKEN}"}
 
     payload = {
@@ -363,4 +363,5 @@ else:
         show_survey_results()
     elif page == "Profile":
         show_profile()
+
 
