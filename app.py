@@ -185,6 +185,26 @@ def show_sidebar():
             st.session_state.logged_in = False
             st.session_state.username = None
             st.rerun()
+            
+        st.markdown("---")
+        st.markdown("### Connect with Me")
+        st.markdown(
+            """
+            <div style="display:flex; gap:15px; align-items:center;">
+            <a href="https://www.linkedin.com/in/hithain-ali" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" 
+                 width="30" title="LinkedIn">
+            </a>
+            <a href="https://www.instagram.com/hithain_4li" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" 
+                 width="30" title="Instagram">
+            </a>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    
 
     return page
 
