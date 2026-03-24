@@ -228,6 +228,10 @@ def show_dashboard():
 def show_mood_tracker():
     st.title("Mood Tracker")
 
+    if "mood_saved" in st.session_state and st.session_state.mood_saved:
+        st.success("✅ Your mood has been saved successfully!")
+        st.session_state.mood_saved = False  
+
     mood = st.slider("How do you feel today?", 1, 10, 5)
     note = st.text_area("Reflection / Notes")
 
@@ -237,7 +241,8 @@ def show_mood_tracker():
             (st.session_state.username, mood, note, datetime.now().isoformat())
         )
         conn.commit()
-        st.success("Mood saved successfully")
+
+        st.session_state.mood_saved = True
         st.rerun()
 
 # -------------------- AI COACH --------------------
