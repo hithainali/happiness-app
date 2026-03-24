@@ -6,7 +6,8 @@ from datetime import datetime
 import hashlib
 import requests
 import json
-
+from dotenv import load_dotenv
+load_dotenv()
 
 # -------------------- PAGE CONFIG --------------------
 st.set_page_config(
@@ -185,9 +186,9 @@ def show_sidebar():
             st.session_state.logged_in = False
             st.session_state.username = None
             st.rerun()
-            
         st.markdown("---")
         st.markdown("### Connect with Me")
+        
         st.markdown(
             """
             <div style="display:flex; gap:15px; align-items:center;">
@@ -203,8 +204,6 @@ def show_sidebar():
             """,
             unsafe_allow_html=True
         )
-
-    
 
     return page
 
@@ -247,14 +246,21 @@ def show_mood_tracker():
 def show_ai_coach():
     st.title("AI Wellbeing Coach")
 
-    user_input = st.text_area("Share what you're feeling")
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = []
 
-    if st.button("Get Coaching"):
-        if user_input.strip() == "":
-            st.warning("Please enter something first.")
-            return
+    for chat in st.session_state.chat_history:
+        with st.chat_message(chat["role"]):
+            st.markdown(chat["content"])
 
-        # Fetch last 5 mood entries for memory
+    user_input = st.chat_input("Share what you're feeling...")
+
+    if user_input:
+        st.session_state.chat_history.append({"role": "user", "content": user_input})
+
+        with st.chat_message("user"):
+            st.markdown(user_input)
+
         c.execute(
             "SELECT mood, note, date FROM moods WHERE username=? ORDER BY date DESC LIMIT 5",
             (st.session_state.username,)
@@ -262,13 +268,13 @@ def show_ai_coach():
         past_entries = c.fetchall()
 
         memory_text = ""
-
         if past_entries:
             memory_text += "Recent mood history:\n"
             for mood, note, date in past_entries:
                 memory_text += f"- Date: {date}, Mood: {mood}/10, Note: {note}\n"
         else:
             memory_text += "No previous mood history available.\n"
+
         prompt = f"""
 You are a warm, empathetic emotional wellbeing coach.
 
@@ -280,20 +286,22 @@ Do NOT give medical diagnosis.
 
 {memory_text}
 
-User currently says:
+User says:
 {user_input}
 """
 
         response = generate_ai_response(prompt)
 
-        st.subheader("Coach Response")
-        st.info(response)
+        st.session_state.chat_history.append({"role": "assistant", "content": response})
+
+        with st.chat_message("assistant"):
+            st.markdown(response)
+
         c.execute(
             "INSERT INTO ai_chats (username, user_message, ai_response, date) VALUES (?, ?, ?, ?)",
             (st.session_state.username, user_input, response, datetime.now().isoformat())
         )
         conn.commit()
-
 
 # -------------------- INSIGHTS --------------------
 def show_insights():
@@ -400,8 +408,6 @@ else:
         show_survey_results()
     elif page == "Profile":
         show_profile()
-
-
 
 
 
