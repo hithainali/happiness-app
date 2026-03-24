@@ -6,8 +6,6 @@ from datetime import datetime
 import hashlib
 import requests
 import json
-from dotenv import load_dotenv
-load_dotenv()
 
 # -------------------- PAGE CONFIG --------------------
 st.set_page_config(
