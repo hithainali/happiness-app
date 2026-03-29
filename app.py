@@ -55,7 +55,10 @@ def generate_ai_response(prompt):
         return f"Error: {str(e)}"
 
 # -------------------- DATABASE --------------------
-conn = sqlite3.connect("happiness_pro.db", check_same_thread=False)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "happiness_pro.db")
+
+conn = sqlite3.connect(DB_PATH, check_same_thread=False)
 c = conn.cursor()
 
 c.execute("""
