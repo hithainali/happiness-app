@@ -7,14 +7,14 @@ import hashlib
 import requests
 import json
 
-# -------------------- PAGE CONFIG --------------------
+# WEBPAGE CONFIG________________________________________ 
 st.set_page_config(
     page_title="Happiness & Wellbeing Platform",
     page_icon="🧠",
     layout="wide"
 )
 
-# -------------------- AI CONFIG --------------------
+# AI CONFIG____________________________________________________
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 def generate_ai_response(prompt):
@@ -54,7 +54,7 @@ def generate_ai_response(prompt):
     except Exception as e:
         return f"Error: {str(e)}"
 
-# -------------------- DATABASE --------------------
+# DATABASE_______________________________________________________________
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "happiness_pro.db")
 
@@ -94,14 +94,14 @@ CREATE TABLE IF NOT EXISTS ai_chats (
 
 conn.commit()
 
-# -------------------- UTILITIES --------------------
+# ACCOUNT CREATION_________________________________________________________________
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
 def verify_password(password, password_hash):
     return hash_password(password) == password_hash
 
-# -------------------- ADMIN INIT --------------------
+# ADMIN VERIFICATION______________________________________________________________________________
 def init_admin():
     c.execute("SELECT * FROM users WHERE username='admin'")
     if not c.fetchone():
@@ -113,12 +113,12 @@ def init_admin():
 
 init_admin()
 
-# -------------------- SESSION --------------------
+# SESSION________________________________________________________________________-
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
     st.session_state.username = None
 
-# -------------------- AUTH --------------------
+# PASSWORD VERIFICATION________________________________________________________________
 def authenticate(username, password):
     c.execute("SELECT password_hash FROM users WHERE username=?", (username,))
     row = c.fetchone()
@@ -137,7 +137,7 @@ def register_user(username, password):
     except sqlite3.IntegrityError:
         return False, "Username already exists"
 
-# -------------------- LOGIN UI --------------------
+# LOGIN PAGE UI___________________________________________________________________
 def show_auth():
     st.title("Happiness & Wellbeing Platform")
 
@@ -167,14 +167,12 @@ def show_auth():
                 else:
                     st.error(msg)
 
-# -------------------- SIDEBAR --------------------
+# SIDEBAR____________________________________________________________________________________
 def show_sidebar():
     with st.sidebar:
 
-        # Base menu for all users
         menu_options = ["Dashboard", "Mood Tracker", "AI Coach", "Insights", "Profile"]
 
-        # Add Survey Results only for admin
         if st.session_state.username == "admin":
             menu_options.insert(4, "Survey Results")
 
@@ -209,7 +207,7 @@ def show_sidebar():
     return page
 
 
-# -------------------- DASHBOARD --------------------
+# DASHBOARD_____________________________________________________________________________
 def show_dashboard():
     st.title("Dashboard")
     c.execute("SELECT mood FROM moods WHERE username=?", (st.session_state.username,))
@@ -227,7 +225,7 @@ def show_dashboard():
         st.line_chart(df)
 
 
-# -------------------- MOOD TRACKER --------------------
+# MOOD TRACKER________________________________________________________________
 def show_mood_tracker():
     st.title("Mood Tracker")
 
@@ -248,7 +246,7 @@ def show_mood_tracker():
         st.session_state.mood_saved = True
         st.rerun()
 
-# -------------------- AI COACH --------------------
+# AI COACH______________________________________________________________________________
 def show_ai_coach():
     st.title("AI Wellbeing Coach")
 
@@ -309,7 +307,7 @@ User says:
         )
         conn.commit()
 
-# -------------------- INSIGHTS --------------------
+# INSIGHTS_______________________________________________________________________________
 def show_insights():
     st.title("Insights")
 
@@ -325,25 +323,22 @@ def show_insights():
     else:
         st.info("Not enough data yet.")
 
-# -------------------- SURVEY RESULT --------------------
+# SURVEY RESULT_____________________________________________________________
 def show_survey_results():
     if st.session_state.username != "admin":
         st.error("Access denied.")
         return
     st.title("Survey Results - All Users")
 
-    # Fetch all moods
     df = pd.read_sql_query("SELECT mood, date FROM moods", conn)
 
     if df.empty:
         st.info("No survey responses yet.")
         return
 
-    # Convert date
     df["date"] = pd.to_datetime(df["date"])
     df["day"] = df["date"].dt.date
 
-    # Overall stats
     overall_avg = round(df["mood"].mean(), 2)
     total_responses = len(df)
 
@@ -353,13 +348,12 @@ def show_survey_results():
 
     st.markdown("---")
 
-    # Daily average across ALL users
     daily_avg = df.groupby("day")["mood"].mean()
 
     st.subheader("Average Mood Per Day (All Users)")
     st.line_chart(daily_avg)
 
-# -------------------- PROFILE --------------------
+# PROFILE_____________________________________________________________________________
 def show_profile():
     st.title("Profile")
 
@@ -372,7 +366,7 @@ def show_profile():
     df = pd.DataFrame(rows, columns=["Mood", "Note", "Date"])
     st.dataframe(df, width=True)
 
-# -------------------- ADMIN DATA VIEW --------------------
+# ADMIN DATA VIEW____________________________________________________________________
     if st.session_state.username == "admin":
         st.markdown("---")
         st.subheader("Admin Panel - All Users Data")
@@ -396,7 +390,7 @@ def show_profile():
                     mime="text/csv"
                 )
 
-# -------------------- MAIN --------------------
+# MAIN____________________________________________________________
 if not st.session_state.logged_in:
     show_auth()
 else:
