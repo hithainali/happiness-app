@@ -10,7 +10,7 @@ import json
 # WEBPAGE CONFIG________________________________________ 
 st.set_page_config(
     page_title="Happiness & Wellbeing Platform",
-    page_icon="🧠",
+    page_icon="🥰",
     layout="wide"
 )
 
