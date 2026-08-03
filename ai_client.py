@@ -30,4 +30,4 @@ def generate_ai_response(prompt: str, timeout: int = 10) -> str:
         return j["choices"][0]["message"]["content"]
     except Exception as exc:
         logging.exception("AI request failed")
-        return "Sorry — the AI service is currently unavailable."
+        return "Sorry — the AI service is currently unavailable. Please try again later."

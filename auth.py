@@ -53,5 +53,5 @@ def init_admin() -> None:
     else:
         # Do not create a default insecure admin. Inform the operator.
         print(
-            "No admin user found and ADMIN_PASSWORD not set. To create an admin user, set the ADMIN_PASSWORD environment variable before first run."
+            "No admin user found and ADMIN_PASSWORD not set. To create an admin user, set the ADMIN_PASSWORD environment variable before running the application."
         )

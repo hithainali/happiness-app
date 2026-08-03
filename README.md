@@ -1,6 +1,15 @@
 # Happiness & Wellbeing Platform
 
-A small Streamlit app to track moods and get AI wellbeing coaching.
+A small Streamlit app to track moods and get AI emotional support Chatbot.
+
+Users can:
+
+- Track daily moods
+- Visualize mood trends
+- Chat with an AI
+- Create secure accounts
+- Admin dashboard to monitor survey responses
+
 
 ## Quickstart
 
@@ -28,3 +37,35 @@ streamlit run app.py
 Notes:
 - ADMIN_PASSWORD: set this before first run to create the `admin` account. If not set, the app will not create a default admin and will print an instruction.
 - Passwords are stored hashed using bcrypt (passlib).
+
+
+## 🛠️ Tech Stack
+
+### Frontend
+- Streamlit
+
+### Backend
+- Python
+
+### Database
+- SQLite
+
+### Authentication
+- Passlib
+- bcrypt
+
+### AI
+- Groq API
+- Llama 3.1 8B Instant
+
+### Data Processing & Visualization
+- Pandas
+- Streamlit Charts
+
+### Environment & Configuration
+- python-dotenv
+
+### Development Tools
+- Git
+- GitHub
+- VS Code

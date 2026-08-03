@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-# Load .env first
+# Load .env first before importing other modules that might depend on environment variables
 try:
     from dotenv import load_dotenv
     load_dotenv()

@@ -24,7 +24,7 @@ def show_auth():
             if authenticate(username, password):
                 st.session_state.logged_in = True
                 st.session_state.username = username
-                st.experimental_rerun()
+                st.rerun()
             else:
                 st.error("Invalid username or password")
 
@@ -54,7 +54,7 @@ def show_sidebar():
         if st.button("Logout"):
             st.session_state.logged_in = False
             st.session_state.username = None
-            st.experimental_rerun()
+            st.rerun()
 
         st.markdown("---")
         st.markdown("### Connect with Me")
@@ -107,7 +107,7 @@ def show_mood_tracker():
     if st.button("Save Entry"):
         save_mood(st.session_state.username, mood, note)
         st.session_state.mood_saved = True
-        st.experimental_rerun()
+        st.rerun()
 
 
 def show_ai_coach():

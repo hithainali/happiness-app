@@ -65,8 +65,6 @@ def db_cursor():
         conn.close()
 
 
-# Helper functions
-
 def create_user(username: str, password_hash: str) -> bool:
     with db_cursor() as (conn, cur):
         try:
