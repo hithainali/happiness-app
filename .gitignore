@@ -1,0 +1,15 @@
+# Byte-compiled / virtual env
+__pycache__/
+.venv/
+
+# Database & exports
+happiness_pro.db
+exported_data.csv
+*.csv
+
+# dotenv
+.env
+
+# Editor
+.vscode/
+.idea/
