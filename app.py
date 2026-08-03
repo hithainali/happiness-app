@@ -7,14 +7,18 @@ import hashlib
 import requests
 import json
 
-# WEBPAGE CONFIG________________________________________ 
+# ==================================================
+# Webpage Configuration
+# ==================================================
 st.set_page_config(
     page_title="Happiness & Wellbeing Platform",
     page_icon="🥰",
     layout="wide"
 )
 
-# AI CONFIG____________________________________________________
+# ==================================================
+# AI Configuration
+# ==================================================
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 def generate_ai_response(prompt):
@@ -54,7 +58,9 @@ def generate_ai_response(prompt):
     except Exception as e:
         return f"Error: {str(e)}"
 
-# DATABASE_______________________________________________________________
+# ==================================================
+# Database Setup
+# ==================================================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "happiness_pro.db")
 
@@ -94,14 +100,18 @@ CREATE TABLE IF NOT EXISTS ai_chats (
 
 conn.commit()
 
-# ACCOUNT CREATION_________________________________________________________________
+# ==================================================
+# Authentication
+# ==================================================
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
 def verify_password(password, password_hash):
     return hash_password(password) == password_hash
 
-# ADMIN VERIFICATION______________________________________________________________________________
+# ==================================================
+# Admin Initialization
+# ==================================================
 def init_admin():
     c.execute("SELECT * FROM users WHERE username='admin'")
     if not c.fetchone():
@@ -113,12 +123,16 @@ def init_admin():
 
 init_admin()
 
-# SESSION________________________________________________________________________-
+# ==================================================
+# Session Management
+# ==================================================
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
     st.session_state.username = None
 
-# PASSWORD VERIFICATION________________________________________________________________
+# ==================================================
+# Password Verification
+# ==================================================
 def authenticate(username, password):
     c.execute("SELECT password_hash FROM users WHERE username=?", (username,))
     row = c.fetchone()
@@ -137,7 +151,9 @@ def register_user(username, password):
     except sqlite3.IntegrityError:
         return False, "Username already exists"
 
-# LOGIN PAGE UI___________________________________________________________________
+# ==================================================
+# Login Page UI
+# ==================================================
 def show_auth():
     st.title("Happiness & Wellbeing Platform")
 
@@ -167,7 +183,9 @@ def show_auth():
                 else:
                     st.error(msg)
 
-# SIDEBAR____________________________________________________________________________________
+# ==================================================
+# Sidebar
+# ==================================================
 def show_sidebar():
     with st.sidebar:
 
@@ -207,7 +225,9 @@ def show_sidebar():
     return page
 
 
-# DASHBOARD_____________________________________________________________________________
+# ==================================================
+# Dashboard
+# ==================================================
 def show_dashboard():
     st.title("Dashboard")
     c.execute("SELECT mood FROM moods WHERE username=?", (st.session_state.username,))
@@ -225,7 +245,9 @@ def show_dashboard():
         st.line_chart(df)
 
 
-# MOOD TRACKER________________________________________________________________
+# ==================================================
+# Mood Tracker
+# ==================================================
 def show_mood_tracker():
     st.title("Mood Tracker")
 
@@ -246,7 +268,9 @@ def show_mood_tracker():
         st.session_state.mood_saved = True
         st.rerun()
 
-# AI COACH______________________________________________________________________________
+# ==================================================
+# AI Coach
+# ==================================================
 def show_ai_coach():
     st.title("AI Wellbeing Coach")
 
@@ -307,7 +331,9 @@ User says:
         )
         conn.commit()
 
-# INSIGHTS_______________________________________________________________________________
+# ==================================================
+# Insights
+# ==================================================
 def show_insights():
     st.title("Insights")
 
@@ -323,7 +349,9 @@ def show_insights():
     else:
         st.info("Not enough data yet.")
 
-# SURVEY RESULT_____________________________________________________________
+# ==================================================
+# Survey Result
+# ==================================================
 def show_survey_results():
     if st.session_state.username != "admin":
         st.error("Access denied.")
@@ -353,7 +381,9 @@ def show_survey_results():
     st.subheader("Average Mood Per Day (All Users)")
     st.line_chart(daily_avg)
 
-# PROFILE_____________________________________________________________________________
+# ==================================================
+# Profile
+# ==================================================
 def show_profile():
     st.title("Profile")
 
@@ -366,7 +396,9 @@ def show_profile():
     df = pd.DataFrame(rows, columns=["Mood", "Note", "Date"])
     st.dataframe(df, width=True)
 
-# ADMIN DATA VIEW____________________________________________________________________
+# ==================================================
+# Admin Data View
+# ==================================================
     if st.session_state.username == "admin":
         st.markdown("---")
         st.subheader("Admin Panel - All Users Data")
@@ -390,7 +422,9 @@ def show_profile():
                     mime="text/csv"
                 )
 
-# MAIN____________________________________________________________
+# ==================================================
+# Main Application
+# ==================================================
 if not st.session_state.logged_in:
     show_auth()
 else:
