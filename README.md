@@ -11,6 +11,11 @@ Users can:
 - Admin dashboard to monitor survey responses
 
 
+## 🌐 Live Demo
+
+https://happiness-app-fb7poimp8smfhq9gxka9pw.streamlit.app/
+
+
 ## Quickstart
 
 1. Create a virtualenv and install deps:
